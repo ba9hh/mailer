@@ -13,11 +13,16 @@ import nodemailer from 'nodemailer';
 
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: 'zedtourheart@gmail.com', // Your email
     pass: 'kjqk ssnh ozdc ajsj',      // Your email password
   },
+  connectionTimeout: 60000,
+  greetingTimeout: 30000,
+  socketTimeout: 60000,
 });
 dotenv.config();
 
