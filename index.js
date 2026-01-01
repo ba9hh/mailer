@@ -33,21 +33,26 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
 app.post("/send-email", async (req, res) => {
+  console.log("📩 /send-email called");
+
+  res.setTimeout(60000);
+
   const mailOptions = {
-    from: 'zedtourheart@gmail.com',
-    to: 'ezedinejlidi3@gmail.com',
-    subject: 'Commande',
-    text: `Vous avez une commande`,
+    from: "zedtourheart@gmail.com",
+    to: "ezedinejlidi3@gmail.com",
+    subject: "Commande",
+    text: "Vous avez une commande",
   };
 
   try {
+    console.log("⏳ Sending email...");
     await transporter.sendMail(mailOptions);
-
+    console.log("✅ Email sent");
 
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    console.error("❌ Email error:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 mongoose
