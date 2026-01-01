@@ -10,6 +10,9 @@ import multer from "multer";
 import supabase from "./supabaseClient.js";
 import { protect } from "./middleware/authMiddleware.js";
 import nodemailer from 'nodemailer';
+import { Resend } from "resend";
+
+const resend = new Resend("re_762PrZgg_2EE7B8GWTDJeryAUmVYvnHAZ");
 
 
 const transporter = nodemailer.createTransport({
@@ -37,27 +40,41 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
+// app.post("/send-email", async (req, res) => {
+//   console.log("📩 /send-email called");
+
+//   res.setTimeout(60000);
+
+//   const mailOptions = {
+//     from: "zedtourheart@gmail.com",
+//     to: "ezedinejlidi3@gmail.com",
+//     subject: "Commande",
+//     text: "Vous avez une commande",
+//   };
+
+//   try {
+//     console.log("⏳ Sending email...");
+//     await transporter.sendMail(mailOptions);
+//     console.log("✅ Email sent");
+
+//     res.json({ success: true });
+//   } catch (err) {
+//     console.error("❌ Email error:", err);
+//     res.status(500).json({ success: false, error: err.message });
+//   }
+// });
 app.post("/send-email", async (req, res) => {
-  console.log("📩 /send-email called");
-
-  res.setTimeout(60000);
-
-  const mailOptions = {
-    from: "zedtourheart@gmail.com",
-    to: "ezedinejlidi3@gmail.com",
-    subject: "Commande",
-    text: "Vous avez une commande",
-  };
-
   try {
-    console.log("⏳ Sending email...");
-    await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent");
+    await resend.emails.send({
+      from: "notifications@dyaritunisie.com",
+      to: ["ezedinejlidi3@gmail.com"],
+      subject: "Commande",
+      text: "Vous avez une commande",
+    });
 
     res.json({ success: true });
   } catch (err) {
-    console.error("❌ Email error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 mongoose
