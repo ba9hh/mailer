@@ -85,7 +85,7 @@ app.post("/send-email", async (req, res) => {
     }
 
     // Create a more detailed email
-    const emailSubject = `Nouvelle commande de ${senderName}`;
+    const emailSubject = `Nouvelle message de ${senderName}`;
     const emailText = `
 Bonjour ${recipientName},
 
@@ -102,15 +102,15 @@ L'équipe Ktebna Tunisie
     // HTML version for better presentation
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #333;">Nouvelle commande</h2>
+        <h2 style="color: #333;">Nouvelle message</h2>
         <p>Bonjour <strong>${recipientName}</strong>,</p>
-        <p>Vous avez reçu une nouvelle commande:</p>
+        <p>Vous avez reçu une nouvelle message:</p>
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <p><strong>Livre:</strong> ${bookName}</p>
           <p><strong>De:</strong> ${senderName}</p>
           <p><strong>Message:</strong> ${messageContent}</p>
         </div>
-        <p style="color: #666;">Cordialement,<br>L'équipe Dyari Tunisie</p>
+        <p style="color: #666;">Cordialement,<br>L'équipe Ktebna Tunisie</p>
       </div>
     `;
 
