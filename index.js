@@ -65,16 +65,70 @@ app.use("/api/orders", orderRoutes);
 // });
 app.post("/send-email", async (req, res) => {
   try {
+    const { recipientEmail, recipientName, senderName, messageContent, bookName } = req.body;
+
+    // Input validation
+    if (!recipientEmail || !recipientName || !senderName || !messageContent || !bookName) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields"
+      });
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(recipientEmail)) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid email address"
+      });
+    }
+
+    // Create a more detailed email
+    const emailSubject = `Nouvelle commande de ${senderName}`;
+    const emailText = `
+Bonjour ${recipientName},
+
+Vous avez reçu une nouvelle message:
+
+Livre: ${bookName}
+De: ${senderName}
+Message: ${messageContent}
+
+Cordialement,
+L'équipe Ktebna Tunisie
+    `.trim();
+
+    // HTML version for better presentation
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333;">Nouvelle commande</h2>
+        <p>Bonjour <strong>${recipientName}</strong>,</p>
+        <p>Vous avez reçu une nouvelle commande:</p>
+        <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p><strong>Livre:</strong> ${bookName}</p>
+          <p><strong>De:</strong> ${senderName}</p>
+          <p><strong>Message:</strong> ${messageContent}</p>
+        </div>
+        <p style="color: #666;">Cordialement,<br>L'équipe Dyari Tunisie</p>
+      </div>
+    `;
+
     await resend.emails.send({
       from: "notifications@dyaritunisie.com",
-      to: ["ezedinejlidi3@gmail.com"],
-      subject: "Commande",
-      text: "Vous avez une commande",
+      to: [recipientEmail],
+      subject: emailSubject,
+      text: emailText,
+      html: emailHtml,
     });
 
-    res.json({ success: true });
+    res.json({ success: true, message: "Email sent successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Email sending error:", err);
+    res.status(500).json({
+      success: false,
+      error: "Failed to send email. Please try again later."
+    });
   }
 });
 mongoose
